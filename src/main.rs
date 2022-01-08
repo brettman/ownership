@@ -1,16 +1,42 @@
 fn main() {
-    let s = String::from("hello");  // s comes into scope
-    takes_ownership(s); // s moves its value to the function and is no longer valid
-
-    let x = 5;      // x comes into scope
-    makes_copy(x);  // i32 is `copy` so it's still ok to use x after this call
-
+    example_one_tuples();
+    example_two_reference();
+    example_three_mutable_references();
 }
 
-fn takes_ownership(some_string: String){  // some_string comes into scope
-    println!("{}", some_string); 
-} // Here, some_string goes out of scope and `drop` is called.  The backing memory is freed
+fn example_one_tuples(){
 
-fn makes_copy(i: i32){  // i comes into scope
-    println!("{}", i);
-} // i goes out of scope, nothing special happens as this is a stack value
+    let s1 = String::from ("hello");
+    let (s2, len) = calculate_length(s1);
+    // can't use s1, because it goes out of scope when we move it to
+    //  the function to calc length. 
+    // That function has to return a tuple with the original 
+    //  value and the length, to do the following:
+    println!("the length of '{}' is {}.", s2, len);
+}
+
+fn example_two_reference(){
+    let s1 = String::from("hello, again");
+    let len = calculate_length1(&s1);
+    println!("the length of '{}' is {}.", s1, len);
+}
+
+fn example_three_mutable_references(){
+    let mut s = String::from("hello");
+    change(&mut s);
+    println!("{}", s);
+}
+
+fn change(s: &mut String){
+    s.push_str(", world!");
+}
+
+fn calculate_length(s: String) -> (String, usize){
+    let l = s.len();
+
+    (s, l)      // notice lack of semi-colon? this means it is the return statement; 
+}
+
+fn calculate_length1(s: &String) -> usize{
+    s.len()
+}
